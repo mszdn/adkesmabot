@@ -70,7 +70,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "📌 *Layanan Kemahasiswaan*\n\n"
             "Untuk pengajuan surat atau layanan akademik lainnya, "
             "silakan isi formulir berikut:\n\n"
-            "🔗 https://link-google-form-kamu.com",
+            "🔗 belum bikin linknya hehe",
             parse_mode="Markdown",
             reply_markup=main_menu(),
         )
@@ -89,7 +89,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_text(
             "🎓 *Informasi Beasiswa*\n\n"
             "Informasi beasiswa terbaru dapat dilihat melalui:\n\n"
-            "🔗 https://docs.google.com/document/d/1f-rQhkOpVdG82MfyGxskAJUKf-Ft0yPs/edit?usp=sharing&ouid=102753400071035978326&rtpof=true&sd=true",
+            "🔗 https://bit.ly/4siCDSN",
             parse_mode="Markdown",
             reply_markup=main_menu(),
         )
@@ -98,7 +98,7 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await query.message.reply_text(
             "📢 *Kebijakan Kampus*\n\n"
             "Update kebijakan kampus terbaru tersedia melalui channel resmi berikut:\n\n"
-            "🔗 https://whatsapp.com/channel/0029VaOmpOX8vd1XgFovkf1c",
+            "🔗 https://bit.ly/4r5XBU0",
             parse_mode="Markdown",
             reply_markup=main_menu(),
         )
