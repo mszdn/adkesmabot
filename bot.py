@@ -11,9 +11,6 @@ TOKEN = os.getenv("TOKEN")
 user_status = {}
 
 
-# ==============================
-# MENU UTAMA
-# ==============================
 def main_menu():
     keyboard = [
         [InlineKeyboardButton("📌 Layanan Kemahasiswaan", callback_data="layanan")],
@@ -25,12 +22,9 @@ def main_menu():
     return InlineKeyboardMarkup(keyboard)
 
 
-# ==============================
-# COMMAND /start
-# ==============================
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
-    user_status[user_id] = True  # aktifkan user
+    user_status[user_id] = True
 
     await update.message.reply_text(
         "👋 *Selamat datang di ADKESMA Bot*\n\n"
@@ -41,26 +35,19 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         reply_markup=main_menu(),
     )
 
-    # ==============================
 
-
-# COMMAND /end
-# ==============================
 async def end(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
-    user_status[user_id] = False  # nonaktifkan user
+    user_status[user_id] = False
 
     await update.message.reply_text("Bot telah berhenti.")
 
 
-# ==============================
-# BUTTON HANDLER
-# ==============================
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
 
     if not user_status.get(user_id, False):
-        return  # kalau tidak aktif, abaikan
+        return
 
     query = update.callback_query
     await query.answer()
@@ -118,14 +105,11 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
-# ==============================
-# HANDLE PESAN RANDOM
-# ==============================
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
 
     if not user_status.get(user_id, False):
-        return  # kalau bot nonaktif, jangan balas
+        return
 
     await update.message.reply_text(
         "Silakan gunakan menu yang tersedia ya 😊",
@@ -133,9 +117,6 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     )
 
 
-# ==============================
-# MAIN
-# ==============================
 if __name__ == "__main__":
     app = ApplicationBuilder().token(TOKEN).build()
 
