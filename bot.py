@@ -5,12 +5,19 @@ from telegram.ext import (
     CommandHandler,
     CallbackQueryHandler,
     ContextTypes,
+    MessageHandler,
+    filters,
 )
+from telegram.constants import ChatAction
+import asyncio
 
-TOKEN = os.getenv("TOKEN")
+TOKEN = "8014177596:AAE0hUz7TGnNF2kWp01lEnRMj_T0m-Eajzs"
+
 user_status = {}
+visited_users = set()
 
 
+# menu button
 def main_menu():
     keyboard = [
         [InlineKeyboardButton("📌 Layanan Kemahasiswaan", callback_data="layanan")],
@@ -22,111 +29,188 @@ def main_menu():
     return InlineKeyboardMarkup(keyboard)
 
 
+# typing effect
+async def typing_effect(update):
+    await update.message.chat.send_action(action=ChatAction.TYPING)
+    await asyncio.sleep(1)
+
+
+# start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
+
+    user = update.effective_user
+    user_id = user.id
+    name = user.first_name if user.first_name else "Sahabat ADKES"
+
     user_status[user_id] = True
 
+    if user_id not in visited_users:
+        visited_users.add(user_id)
+
+        greeting = (
+            f"Halo {name}! 👋\n\n"
+            "Selamat datang di layanan resmi ADKESMA.\n\n"
+            "Aku *MinMate*, asisten virtual ADKESMA yang siap membantu kamu 😊\n\n"
+            "Kamu bisa:\n"
+            "1️⃣ Layanan Kemahasiswaan\n"
+            "2️⃣ Aspirasi & Pengaduan\n"
+            "3️⃣ Informasi Beasiswa\n"
+            "4️⃣ Kebijakan Kampus\n"
+            "5️⃣ Kontak Admin\n\n"
+            "Silakan pilih menu atau ketik kebutuhanmu ya."
+        )
+
+    else:
+        greeting = (
+            f"Halo lagi {name}! 👋\n\n"
+            "MinMate siap membantu kamu kembali 😊\n\n"
+            "Kamu bisa:\n"
+            "1️⃣ Layanan Kemahasiswaan\n"
+            "2️⃣ Aspirasi & Pengaduan\n"
+            "3️⃣ Informasi Beasiswa\n"
+            "4️⃣ Kebijakan Kampus\n"
+            "5️⃣ Kontak Admin\n\n"
+            "Silakan pilih menu atau ketik kebutuhanmu ya."
+        )
+
+    await typing_effect(update)
+
     await update.message.reply_text(
-        "👋 *Selamat datang di ADKESMA Bot*\n\n"
-        "Call Center Terpadu ADKESMA.\n"
-        "Pelayanan responsif, solutif, dan transparan.\n\n"
-        "Silakan pilih layanan di bawah ini:",
+        greeting,
         parse_mode="Markdown",
         reply_markup=main_menu(),
     )
 
 
-async def end(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-    user_status[user_id] = False
+# RESPON MENU
+async def layanan(update: Update, msg):
+    await typing_effect(update)
 
-    await update.message.reply_text("Bot telah berhenti.")
-
-
-async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-
-    if not user_status.get(user_id, False):
-        return
-
-    query = update.callback_query
-    await query.answer()
-
-    if query.data == "layanan":
-        await query.message.reply_text(
-            "📌 *Layanan Kemahasiswaan*\n\n"
-            "Untuk pengajuan surat atau layanan akademik lainnya, "
-            "silakan isi formulir berikut:\n\n"
-            "🔗 belum bikin linknya hehe",
-            parse_mode="Markdown",
-            reply_markup=main_menu(),
-        )
-
-    elif query.data == "aspirasi":
-        await query.message.reply_text(
-            "📝 *Aspirasi & Pengaduan*\n\n"
-            "Sampaikan aspirasi atau pengaduan Anda melalui formulir berikut.\n"
-            "Identitas sudah pasti dirahasiakan.\n\n"
-            "🔗 https://forms.gle/5TKQfaXQCUWZaF9fA",
-            parse_mode="Markdown",
-            reply_markup=main_menu(),
-        )
-
-    elif query.data == "beasiswa":
-        await query.message.reply_text(
-            "🎓 *Informasi Beasiswa*\n\n"
-            "Informasi beasiswa terbaru dapat dilihat melalui:\n\n"
-            "🔗 https://bit.ly/4siCDSN",
-            parse_mode="Markdown",
-            reply_markup=main_menu(),
-        )
-
-    elif query.data == "kebijakan":
-        await query.message.reply_text(
-            "📢 *Kebijakan Kampus*\n\n"
-            "Update kebijakan kampus terbaru tersedia melalui channel resmi berikut:\n\n"
-            "🔗 https://bit.ly/4r5XBU0",
-            parse_mode="Markdown",
-            reply_markup=main_menu(),
-        )
-
-    elif query.data == "kontak":
-        await query.message.reply_text(
-            "☎️ *Kontak Admin ADKESMA*\n\n"
-            "Jam Layanan:\n"
-            "Senin–Jumat\n"
-            "08.00–16.00 WIB\n\n"
-            "WA Admin:\n"
-            "+62xxxxxxxxxx\n\n"
-            "Email:\n"
-            "adkesma@kampus.ac.id",
-            parse_mode="Markdown",
-            reply_markup=main_menu(),
-        )
-
-
-async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    user_id = update.effective_user.id
-
-    if not user_status.get(user_id, False):
-        return
-
-    await update.message.reply_text(
-        "Silakan gunakan menu yang tersedia ya 😊",
+    await msg.reply_text(
+        "📌 *Layanan Kemahasiswaan*\n\n"
+        "Sahabat ADKES dapat mengajukan layanan administrasi melalui formulir berikut.\n\n"
+        "Silakan isi formulir di bawah ini 👇\n\n"
+        "🔗 link layanan",
+        parse_mode="Markdown",
         reply_markup=main_menu(),
     )
 
 
+async def aspirasi(update: Update, msg):
+    await typing_effect(update)
+    await msg.reply_text(
+        "📝 *Aspirasi & Pengaduan*\n\n"
+        "Sahabat ADKES dapat menyampaikan aspirasi atau pengaduan.\n\n"
+        "Identitas kamu dijamin rahasia.\n\n"
+        "Silakan isi formulir berikut 👇\n\n"
+        "🔗 https://forms.gle/5TKQfaXQCUWZaF9fA",
+        parse_mode="Markdown",
+        reply_markup=main_menu(),
+    )
+
+
+async def beasiswa(update: Update, msg):
+    await typing_effect(update)
+    await msg.reply_text(
+        "🎓 *Informasi Beasiswa*\n\n"
+        "Informasi beasiswa terbaru dapat dilihat melalui link berikut 👇\n\n"
+        "🔗 https://bit.ly/4siCDSN\n\n"
+        "Jangan lupa cek secara berkala ya 😊",
+        parse_mode="Markdown",
+        reply_markup=main_menu(),
+    )
+
+
+async def kebijakan(update: Update, msg):
+    await typing_effect(update)
+    await msg.reply_text(
+        "📢 *Kebijakan Kampus*\n\n"
+        "Update kebijakan kampus terbaru tersedia di link berikut 👇\n\n"
+        "🔗 https://bit.ly/4r5XBU0",
+        parse_mode="Markdown",
+        reply_markup=main_menu(),
+    )
+
+
+async def kontak(update: Update, msg):
+    await typing_effect(update)
+    await msg.reply_text(
+        "☎️ *Kontak Admin ADKESMA*\n\n"
+        "Jika membutuhkan bantuan lebih lanjut:\n\n"
+        "📱 WA: +6281221748221\n"
+        "📧 Email: adkesmate.unnes@gmail.com\n\n"
+        "🕒 Jam layanan:\n"
+        "Senin – Jumat\n"
+        "08.00 – 16.00 WIB",
+        parse_mode="Markdown",
+        reply_markup=main_menu(),
+    )
+
+
+# button handle
+async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    query = update.callback_query
+    await query.answer()
+
+    data = query.data
+
+    if data == "layanan":
+        await layanan(query.message)
+
+    elif data == "aspirasi":
+        await aspirasi(query.message)
+
+    elif data == "beasiswa":
+        await beasiswa(query.message)
+
+    elif data == "kebijakan":
+        await kebijakan(query.message)
+
+    elif data == "kontak":
+        await kontak(query.message)
+
+
+# text handle
+async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = update.message.text.lower()
+    if "layanan" in text or "kemahasiswaan" in text or text == "1":
+        await layanan(update.message)
+    elif "aspirasi" in text or "pengaduan" in text or "lapor" in text or text == "2":
+        await aspirasi(update.message)
+    elif "beasiswa" in text or "info beasiswa" in text or text == "3":
+        await beasiswa(update.message)
+    elif "kebijakan" in text or "aturan" in text or text == "4":
+        await kebijakan(update.message)
+    elif "admin" in text or "kontak" in text or "cs" in text or text == "5":
+        await kontak(update.message)
+    elif "menu" in text:
+        await update.message.reply_text(
+            "Silakan pilih layanan berikut 😊",
+            reply_markup=main_menu(),
+        )
+    elif text in ["halo", "hai", "minmate"]:
+        await update.message.reply_text(
+            "Halo juga Sahabat ADKES! 👋\n\n"
+            "MinMate siap membantu kamu.\n"
+            "Silakan pilih layanan di bawah ya 😊",
+            reply_markup=main_menu(),
+        )
+    else:
+        await update.message.reply_text(
+            "Maaf MinMate belum memahami pesan kamu.\n\n"
+            "Silakan pilih menu atau ketik kebutuhanmu ya 😊",
+            reply_markup=main_menu(),
+        )
+
+
 if __name__ == "__main__":
+
     app = ApplicationBuilder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CallbackQueryHandler(button_handler))
     app.add_handler(CommandHandler("menu", start))
-    app.add_handler(CommandHandler("end", end))
 
-    from telegram.ext import MessageHandler, filters
-
+    app.add_handler(CallbackQueryHandler(button_handler))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
     print("Bot berjalan...")
