@@ -30,8 +30,8 @@ def main_menu():
 
 
 # typing effect
-async def typing_effect(update):
-    await update.message.chat.send_action(action=ChatAction.TYPING)
+async def typing_effect(msg):
+    await msg.chat.send_action(action=ChatAction.TYPING)
     await asyncio.sleep(1)
 
 
@@ -73,7 +73,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Silakan pilih menu atau ketik kebutuhanmu ya."
         )
 
-    await typing_effect(update)
+    await typing_effect(update.message)
 
     await update.message.reply_text(
         greeting,
@@ -84,7 +84,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # RESPON MENU
 async def layanan(update: Update, msg):
-    await typing_effect(update)
+    await typing_effect(msg)
 
     await msg.reply_text(
         "📌 *Layanan Kemahasiswaan*\n\n"
@@ -97,7 +97,7 @@ async def layanan(update: Update, msg):
 
 
 async def aspirasi(update: Update, msg):
-    await typing_effect(update)
+    await typing_effect(msg)
     await msg.reply_text(
         "📝 *Aspirasi & Pengaduan*\n\n"
         "Sahabat ADKES dapat menyampaikan aspirasi atau pengaduan.\n\n"
@@ -110,7 +110,7 @@ async def aspirasi(update: Update, msg):
 
 
 async def beasiswa(update: Update, msg):
-    await typing_effect(update)
+    await typing_effect(msg)
     await msg.reply_text(
         "🎓 *Informasi Beasiswa*\n\n"
         "Informasi beasiswa terbaru dapat dilihat melalui link berikut 👇\n\n"
@@ -122,7 +122,7 @@ async def beasiswa(update: Update, msg):
 
 
 async def kebijakan(update: Update, msg):
-    await typing_effect(update)
+    await typing_effect(msg)
     await msg.reply_text(
         "📢 *Kebijakan Kampus*\n\n"
         "Update kebijakan kampus terbaru tersedia di link berikut 👇\n\n"
@@ -133,7 +133,7 @@ async def kebijakan(update: Update, msg):
 
 
 async def kontak(update: Update, msg):
-    await typing_effect(update)
+    await typing_effect(msg)
     await msg.reply_text(
         "☎️ *Kontak Admin ADKESMA*\n\n"
         "Jika membutuhkan bantuan lebih lanjut:\n\n"
@@ -155,34 +155,34 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     data = query.data
 
     if data == "layanan":
-        await layanan(query.message)
+        await layanan(update, query.message)
 
     elif data == "aspirasi":
-        await aspirasi(query.message)
+        await aspirasi(update, query.message)
 
     elif data == "beasiswa":
-        await beasiswa(query.message)
+        await beasiswa(update, query.message)
 
     elif data == "kebijakan":
-        await kebijakan(query.message)
+        await kebijakan(update, query.message)
 
     elif data == "kontak":
-        await kontak(query.message)
+        await kontak(update, query.message)
 
 
 # text handle
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
     text = update.message.text.lower()
     if "layanan" in text or "kemahasiswaan" in text or text == "1":
-        await layanan(update.message)
+        await layanan(update, update.message)
     elif "aspirasi" in text or "pengaduan" in text or "lapor" in text or text == "2":
-        await aspirasi(update.message)
+        await aspirasi(update, update.message)
     elif "beasiswa" in text or "info beasiswa" in text or text == "3":
-        await beasiswa(update.message)
+        await beasiswa(update, update.message)
     elif "kebijakan" in text or "aturan" in text or text == "4":
-        await kebijakan(update.message)
+        await kebijakan(update, update.message)
     elif "admin" in text or "kontak" in text or "cs" in text or text == "5":
-        await kontak(update.message)
+        await kontak(update, update.message)
     elif "menu" in text:
         await update.message.reply_text(
             "Silakan pilih layanan berikut 😊",
