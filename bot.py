@@ -35,6 +35,17 @@ async def typing_effect(msg):
     await asyncio.sleep(1)
 
 
+# end
+async def end(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+    user_status[user_id] = False
+    
+    await typing_effect(update.message)
+    await update.message.reply_text(
+        "terimakasih sudah menggunakan layanan MinMate, sampai jumpa lagi!"
+    )
+
+
 # start
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
@@ -78,6 +89,24 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
         greeting,
         parse_mode="Markdown",
+        reply_markup=main_menu(),
+    )
+
+
+# menu
+async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
+
+    user_id = update.effective_user.id
+
+    if not user_status.get(user_id, False):
+        await typing_effect(update.message)
+        await update.message.reply_text(
+            "Sesi kamu sudah berakhir.\nKetik /start untuk memulai kembali."
+        )
+        return
+    await typing_effect(update.message)
+    await update.message.reply_text(
+        "Silakan pilih layanan berikut 😊",
         reply_markup=main_menu(),
     )
 
@@ -149,6 +178,15 @@ async def kontak(update: Update, msg):
 
 # button handle
 async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+
+    if not user_status.get(user_id, False):
+        await update.callback_query.answer()
+        await update.callback_query.message.reply_text(
+            "Sesi kamu sudah berakhir.\nKetik /start untuk memulai kembali."
+        )
+        return
+
     query = update.callback_query
     await query.answer()
 
@@ -172,6 +210,16 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # text handle
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    user_id = update.effective_user.id
+
+    # cek apakah user masih aktif
+    if not user_status.get(user_id, False):
+        await typing_effect(update.message)
+        await update.message.reply_text(
+            "Sesi kamu sudah berakhir.\nKetik /start untuk memulai kembali."
+        )
+        return
+
     text = update.message.text.lower()
     if "layanan" in text or "kemahasiswaan" in text or text == "1":
         await layanan(update, update.message)
@@ -196,6 +244,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             reply_markup=main_menu(),
         )
     else:
+        await typing_effect(update.message)
         await update.message.reply_text(
             "Maaf MinMate belum memahami pesan kamu.\n\n"
             "Silakan pilih menu atau ketik kebutuhanmu ya 😊",
@@ -208,7 +257,8 @@ if __name__ == "__main__":
     app = ApplicationBuilder().token(TOKEN).build()
 
     app.add_handler(CommandHandler("start", start))
-    app.add_handler(CommandHandler("menu", start))
+    app.add_handler(CommandHandler("menu", menu))
+    app.add_handler(CommandHandler("end", end))
 
     app.add_handler(CallbackQueryHandler(button_handler))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
