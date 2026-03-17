@@ -11,10 +11,11 @@ from telegram.ext import (
 from telegram.constants import ChatAction
 import asyncio
 
-TOKEN = "8014177596:AAE0hUz7TGnNF2kWp01lEnRMj_T0m-Eajzs"
+TOKEN = os.getenv("TOKEN")
 
 user_status = {}
 visited_users = set()
+user_state = {}
 
 
 # menu button
@@ -29,6 +30,11 @@ def main_menu():
     return InlineKeyboardMarkup(keyboard)
 
 
+def back_menu():
+    keyboard = [[InlineKeyboardButton("⬅️ Kembali ke Menu", callback_data="menu")]]
+    return InlineKeyboardMarkup(keyboard)
+
+
 # typing effect
 async def typing_effect(msg):
     await msg.chat.send_action(action=ChatAction.TYPING)
@@ -39,10 +45,10 @@ async def typing_effect(msg):
 async def end(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
     user_status[user_id] = False
-    
-    await typing_effect(update.message)
+
+    # await typing_effect(update.message)
     await update.message.reply_text(
-        "terimakasih sudah menggunakan layanan MinMate, sampai jumpa lagi!"
+        "terimakasih sudah menggunakan layanan ACA, sampai jumpa lagi!"
     )
 
 
@@ -51,45 +57,32 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user = update.effective_user
     user_id = user.id
-    name = user.first_name if user.first_name else "Sahabat ADKES"
+    name = user.first_name if user.first_name else "Sahabat MATES"
 
     user_status[user_id] = True
+    user_state[user_id] = "ASK_MENU"
 
     if user_id not in visited_users:
         visited_users.add(user_id)
 
         greeting = (
             f"Halo {name}! 👋\n\n"
-            "Selamat datang di layanan resmi ADKESMA.\n\n"
-            "Aku *MinMate*, asisten virtual ADKESMA yang siap membantu kamu 😊\n\n"
-            "Kamu bisa:\n"
-            "1️⃣ Layanan Kemahasiswaan\n"
-            "2️⃣ Aspirasi & Pengaduan\n"
-            "3️⃣ Informasi Beasiswa\n"
-            "4️⃣ Kebijakan Kampus\n"
-            "5️⃣ Kontak Admin\n\n"
-            "Silakan pilih menu atau ketik kebutuhanmu ya."
+            "Saya Aca dari Teman Berarti. Saya siap membantu memberikan informasi serta menampung aspirasi, keluhan, dan saran dari teman-teman terkait kehidupan kampus.\n\n"
+            "Jangan ragu untuk bercerita ya, karena setiap suara mahasiswa berarti untuk didengar dan diperjuangkan.\n\n"
+            "Eh sebelumnya, kamu sudah tau belum menu yang tersedia? 😊"
         )
 
     else:
         greeting = (
             f"Halo lagi {name}! 👋\n\n"
-            "MinMate siap membantu kamu kembali 😊\n\n"
-            "Kamu bisa:\n"
-            "1️⃣ Layanan Kemahasiswaan\n"
-            "2️⃣ Aspirasi & Pengaduan\n"
-            "3️⃣ Informasi Beasiswa\n"
-            "4️⃣ Kebijakan Kampus\n"
-            "5️⃣ Kontak Admin\n\n"
-            "Silakan pilih menu atau ketik kebutuhanmu ya."
+            "Aca siap membantu kamu kembali 😊\n\n"
+            "Eh sebelumnya, kamu masih ingat menu yang tersedia? 😊"
         )
 
-    await typing_effect(update.message)
+    # await typing_effect(update.message)
 
     await update.message.reply_text(
         greeting,
-        parse_mode="Markdown",
-        reply_markup=main_menu(),
     )
 
 
@@ -99,12 +92,12 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_id = update.effective_user.id
 
     if not user_status.get(user_id, False):
-        await typing_effect(update.message)
+        # await typing_effect(update.message)
         await update.message.reply_text(
             "Sesi kamu sudah berakhir.\nKetik /start untuk memulai kembali."
         )
         return
-    await typing_effect(update.message)
+    # await typing_effect(update.message)
     await update.message.reply_text(
         "Silakan pilih layanan berikut 😊",
         reply_markup=main_menu(),
@@ -113,66 +106,66 @@ async def menu(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # RESPON MENU
 async def layanan(update: Update, msg):
-    await typing_effect(msg)
+    # await typing_effect(msg)
 
     await msg.reply_text(
         "📌 *Layanan Kemahasiswaan*\n\n"
-        "Sahabat ADKES dapat mengajukan layanan administrasi melalui formulir berikut.\n\n"
-        "Silakan isi formulir di bawah ini 👇\n\n"
-        "🔗 link layanan",
+        "Sahabat MATES dapat mengajukan layanan administrasi melalui tempalate berikut.\n\n"
+        "Silakan gunakan template di bawah ini 👇\n\n"
+        "🔗 https://bit.ly/4sNfng3",
         parse_mode="Markdown",
-        reply_markup=main_menu(),
+        reply_markup=back_menu(),
     )
 
 
 async def aspirasi(update: Update, msg):
-    await typing_effect(msg)
+    # await typing_effect(msg)
     await msg.reply_text(
         "📝 *Aspirasi & Pengaduan*\n\n"
-        "Sahabat ADKES dapat menyampaikan aspirasi atau pengaduan.\n\n"
+        "Sahabat MATES dapat menyampaikan aspirasi atau pengaduan.\n\n"
         "Identitas kamu dijamin rahasia.\n\n"
         "Silakan isi formulir berikut 👇\n\n"
-        "🔗 https://forms.gle/5TKQfaXQCUWZaF9fA",
+        "🔗 https://forms.gle/Z1CDTEbkDLfY5u4YA",
         parse_mode="Markdown",
-        reply_markup=main_menu(),
+        reply_markup=back_menu(),
     )
 
 
 async def beasiswa(update: Update, msg):
-    await typing_effect(msg)
+    # await typing_effect(msg)
     await msg.reply_text(
         "🎓 *Informasi Beasiswa*\n\n"
         "Informasi beasiswa terbaru dapat dilihat melalui link berikut 👇\n\n"
         "🔗 https://bit.ly/4siCDSN\n\n"
         "Jangan lupa cek secara berkala ya 😊",
         parse_mode="Markdown",
-        reply_markup=main_menu(),
+        reply_markup=back_menu(),
     )
 
 
 async def kebijakan(update: Update, msg):
-    await typing_effect(msg)
+    # await typing_effect(msg)
     await msg.reply_text(
         "📢 *Kebijakan Kampus*\n\n"
         "Update kebijakan kampus terbaru tersedia di link berikut 👇\n\n"
         "🔗 https://bit.ly/4r5XBU0",
         parse_mode="Markdown",
-        reply_markup=main_menu(),
+        reply_markup=back_menu(),
     )
 
 
 async def kontak(update: Update, msg):
-    await typing_effect(msg)
+    # await typing_effect(msg)
     await msg.reply_text(
         "☎️ *Kontak Admin ADKESMA*\n\n"
         "Jika membutuhkan bantuan lebih lanjut:\n\n"
-        "📱 WA: +6281221748221\n"
+        "📱 WA: +6281221748221 (zaky rinov)\n"
         "📧 Email: adkesmate.unnes@gmail.com\n\n"
         "🕒 Jam layanan:\n"
         "Senin – Jumat\n"
         "08.00 – 16.00 WIB",
         parse_mode="Markdown",
-        reply_markup=main_menu(),
+        reply_markup=back_menu(),
     )
 
 
@@ -207,6 +200,12 @@ async def button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     elif data == "kontak":
         await kontak(update, query.message)
 
+    elif data == "menu":
+        await query.message.reply_text(
+            "Silakan pilih layanan berikut 😊",
+            reply_markup=main_menu(),
+        )
+
 
 # text handle
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -214,11 +213,37 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # cek apakah user masih aktif
     if not user_status.get(user_id, False):
-        await typing_effect(update.message)
+        # await typing_effect(update.message)
         await update.message.reply_text(
             "Sesi kamu sudah berakhir.\nKetik /start untuk memulai kembali."
         )
         return
+
+    text = update.message.text.lower()
+    state = user_state.get(user_id)
+
+    if state == "ASK_MENU":
+        if any(
+            kata in text for kata in ["belum", "tidak", "engga", "gak", "ngga", "ga"]
+        ):
+            user_state[user_id] = "MAIN_MENU"
+            await update.message.reply_text(
+                "Tenang Mates! 😊\n\nIni dia menu yang bisa kamu pilih 👇",
+                reply_markup=main_menu(),
+            )
+            return
+        elif any(kata in text for kata in ["masih", "iyaa", "iya", "ingat", "inget"]):
+            user_state[user_id] = "MAIN_MENU"
+            await update.message.reply_text(
+                "Mantap! 😎\n\nLangsung pilih menu yang kamu butuhkan ya 👇",
+                reply_markup=main_menu(),
+            )
+            return
+        else:
+            await update.message.reply_text(
+                "Hehe, jawab dulu ya Mates 🙌\nSudah tau menunya atau belum? 😊"
+            )
+            return
 
     text = update.message.text.lower()
     if "layanan" in text or "kemahasiswaan" in text or text == "1":
@@ -236,17 +261,22 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
             "Silakan pilih layanan berikut 😊",
             reply_markup=main_menu(),
         )
-    elif text in ["halo", "hai", "minmate"]:
+    elif text in ["halo", "hai", "ACA", "hi", "hello", "alo", "allo"]:
         await update.message.reply_text(
             "Halo juga Sahabat ADKES! 👋\n\n"
-            "MinMate siap membantu kamu.\n"
+            "ACA siap membantu kamu.\n"
             "Silakan pilih layanan di bawah ya 😊",
             reply_markup=main_menu(),
         )
-    else:
-        await typing_effect(update.message)
+    elif text in ["terimakasih", "thanks", "thank you", "makasih"]:
         await update.message.reply_text(
-            "Maaf MinMate belum memahami pesan kamu.\n\n"
+            "Sama-sama Sahabat ADKES! 😉\n\n"
+            "Jika ada yang bisa ACA bantu lagi, jangan ragu untuk bertanya ya!",
+        )
+    else:
+        # await typing_effect(update.message)
+        await update.message.reply_text(
+            "Maaf ACA belum memahami pesan kamu.\n\n"
             "Silakan pilih menu atau ketik kebutuhanmu ya 😊",
             reply_markup=main_menu(),
         )
