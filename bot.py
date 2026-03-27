@@ -112,7 +112,7 @@ async def layanan(update: Update, msg):
         "📌 *Layanan Kemahasiswaan*\n\n"
         "Sahabat MATES dapat mengajukan layanan administrasi melalui tempalate berikut.\n\n"
         "Silakan gunakan template di bawah ini 👇\n\n"
-        "🔗 https://bit.ly/4sNfng3",
+        "🔗 https://bit.ly/4c98Jv1",
         parse_mode="Markdown",
         reply_markup=back_menu(),
     )
