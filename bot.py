@@ -232,7 +232,21 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 reply_markup=main_menu(),
             )
             return
-        elif any(kata in text for kata in ["masih", "iyaa", "iya", "ingat", "inget"]):
+        elif any(
+            kata in text
+            for kata in [
+                "masih",
+                "iyaa",
+                "iya",
+                "ingat",
+                "inget",
+                "tau",
+                "sudah",
+                "udah",
+                "tauuu",
+                "udahh",
+            ]
+        ):
             user_state[user_id] = "MAIN_MENU"
             await update.message.reply_text(
                 "Mantap! 😎\n\nLangsung pilih menu yang kamu butuhkan ya 👇",
