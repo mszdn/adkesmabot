@@ -136,7 +136,7 @@ async def beasiswa(update: Update, msg):
     await msg.reply_text(
         "🎓 *Informasi Beasiswa*\n\n"
         "Informasi beasiswa terbaru dapat dilihat melalui link berikut 👇\n\n"
-        "🔗 https://bit.ly/4siCDSN\n\n"
+        "🔗 https://bit.ly/4bICX83\n\n"
         "Jangan lupa cek secara berkala ya 😊",
         parse_mode="Markdown",
         reply_markup=back_menu(),
